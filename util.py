@@ -2,6 +2,12 @@ from collections import deque
 from typing import Optional
 
 
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
@@ -39,3 +45,27 @@ def normalize_tree(root: Optional[TreeNode]) -> list[int]:
 
 def display_tree(root: Optional[TreeNode]) -> None:
     print(normalize_tree(root))
+
+
+def build_linked_list(arr: list[int], i: int = 0) -> Optional[ListNode]:
+    root, parent = None, None
+    for num in arr:
+        if root is None:
+            root = ListNode(num)
+            parent = root
+        else:
+            parent.next = ListNode(num)
+            parent = parent.next
+    return root
+
+
+def display_linked_list(node: Optional[ListNode]) -> None:
+    if not node:
+        print(node)
+        return
+    print(node.val, end=" ")
+    if node.next:
+        print("->", end=" ")
+        display_linked_list(node.next)
+    else:
+        print()
