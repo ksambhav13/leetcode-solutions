@@ -35,12 +35,14 @@ def normalize_tree(root: Optional[TreeNode]) -> list[int]:
         node = queue.popleft()
         if node:
             res.append(node.val)
-            if node.left or node.right:
-                queue.append(node.left)
-                queue.append(node.right)
+            queue.append(node.left)
+            queue.append(node.right)
         else:
             res.append(None)
-    return res
+    l = len(res) - 1
+    while res[l] is None:
+        l -= 1
+    return res[: l + 1]
 
 
 def display_tree(root: Optional[TreeNode]) -> None:
