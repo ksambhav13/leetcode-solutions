@@ -71,9 +71,7 @@ def generate_python_code(question):
         param_str = "testcase"
         if param_count > 1:
             param_str = f"testcases[i + {i}]" if i > 0 else "testcases[i]"
-        if param["type"] == "integer[]":
-            typing_import.add("List")
-        elif param["type"] == "integer[][]":
+        if "[]" in param["type"]:
             typing_import.add("List")
         elif param["type"] == "ListNode":
             util_import.add("ListNode")
@@ -99,12 +97,12 @@ def generate_python_code(question):
     return_type = metadata["return"]["type"]
     if return_type == "list<integer>" or return_type == "list<string>":
         typing_import.add("List")
-    elif metadata["return"]["type"] == "ListNode":
+    elif return_type == "ListNode":
         display_result_func = "display_linked_list"
         util_import.add("ListNode")
         util_import.add("display_linked_list")
         typing_import.add("Optional")
-    elif metadata["return"]["type"] == "TreeNode":
+    elif return_type == "TreeNode":
         display_result_func = "display_tree"
         util_import.add("TreeNode")
         util_import.add("display_tree")
