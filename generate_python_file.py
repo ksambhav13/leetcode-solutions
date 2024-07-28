@@ -95,7 +95,9 @@ def generate_python_code(question):
 
     # generate code for display result function
     display_result_func = "print"
-    if metadata["return"]["type"] == "list<integer>":
+
+    return_type = metadata["return"]["type"]
+    if return_type == "list<integer>" or return_type == "list<string>":
         typing_import.add("List")
     elif metadata["return"]["type"] == "ListNode":
         display_result_func = "display_linked_list"
