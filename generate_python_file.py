@@ -39,7 +39,26 @@ def fetch_question_details(titleSlug):
         )
 
 
+def add_pass_to_methods(code: str) -> str:
+    lines = code.split("\n")
+    in_method = False
+    for i, line in enumerate(lines):
+        stripped_line = line.strip()
+        if stripped_line.startswith("def "):
+            in_method = True
+        elif in_method and stripped_line == "":
+            lines[i] = "        pass"
+            in_method = False
+        elif in_method and stripped_line.startswith("def "):
+            in_method = False
+
+    return "\n".join(lines)
+
+
 def generate_python_code(question):
+    # generate header comment
+    header_comment = f"# [{question["questionId"]}. {question["title"]}](https://leetcode.com/problems/{question["titleSlug"]}/)"
+
     codeSnippets = question["codeSnippets"]
     for code_def in codeSnippets:
         if code_def["langSlug"] == "python3":
@@ -64,8 +83,20 @@ def generate_python_code(question):
 
     # generate code for parameters
     metadata = question["metaData"]
-    # print(f"{metadata=}")
-    param_count = len(metadata["params"])
+
+    if "name" not in metadata:
+        return f"""{header_comment}
+{add_pass_to_methods(python_code)}
+{testcases_code}
+
+for i in range(0, len(testcases), 2):
+    obj = globals()[testcases[i][0]](*testcases[i + 1][0])
+    print(None)
+    for j in range(1, len(testcases[i])):
+        method = getattr(obj, testcases[i][j])
+        print(method(*testcases[i + 1][j]))
+
+"""
 
     def create_param_str(param, i):
         param_str = "testcase"
@@ -85,6 +116,7 @@ def generate_python_code(question):
             param_str = f"build_tree({param_str})"
         return param_str
 
+    param_count = len(metadata["params"])
     params_list = []
     for i, param in enumerate(metadata["params"]):
         param_str = create_param_str(param, i)
@@ -108,7 +140,6 @@ def generate_python_code(question):
         util_import.add("display_tree")
         typing_import.add("Optional")
 
-    header_comment = f"# [{question["questionId"]}. {question["title"]}](https://leetcode.com/problems/{question["titleSlug"]}/)"
     util_import_code = (
         f"from util import {", ".join(sorted(util_import))}" if util_import else ""
     )
