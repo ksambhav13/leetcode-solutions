@@ -14,14 +14,27 @@ class TreeNode:
         self.left = left
         self.right = right
 
+    def __repr__(self) -> str:
+        return f"val = {self.val}"
 
-def build_tree(arr: list[int], i: int = 0) -> Optional[TreeNode]:
+
+def build_tree(arr: list[int]) -> Optional[TreeNode]:
     n = len(arr)
-    root = None
-    if i < n and arr[i] is not None:
-        root = TreeNode(arr[i])
-        root.left = build_tree(arr, 2 * i + 1)
-        root.right = build_tree(arr, 2 * i + 2)
+    if n == 0:
+        return None
+    nodes = [TreeNode(tn) if tn is not None else None for tn in arr]
+    root = nodes[0]
+    q = deque()
+    q.append(root)
+    for i in range(1, n - 1, 2):
+        pn = q.popleft()
+        if nodes[i]:
+            pn.left = nodes[i]
+            q.append(pn.left)
+
+        if nodes[i + 1]:
+            pn.right = nodes[i + 1]
+            q.append(pn.right)
     return root
 
 
